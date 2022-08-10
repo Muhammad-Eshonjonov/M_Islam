@@ -24,12 +24,21 @@ async def commands(msg: types.Message):
                                parse_mode="Markdown",
                                reply_markup = keyboards.areas)
     else:
-        await bot.send_message(msg.from_user.id, "Ассаламу Алейкум ва Рахматуллохи ва Баракатух 🤝", reply_markup = keyboards.menu)
+        if msg.from_user.id in config.admins_id:
+            await bot.send_message(msg.from_user.id, "Ассаламу Алейкум ва Рахматуллохи ва Баракатух 🤝",
+                                   reply_markup=keyboards.menu.row(keyboards.additional_menu))
+        else:
+            await bot.send_message(msg.from_user.id, "Ассаламу Алейкум ва Рахматуллохи ва Баракатух 🤝",
+                                   reply_markup=keyboards.menu)
+
+        db.update_last_use(msg.from_user.id)
+
 
 @dp.message_handler()
 async def message_command(msg: types.Message):
     user_info = db.get_user(msg.from_user.id)
     if user_info:
+        db.update_last_use(msg.from_user.id)
         if msg.text == "Время молитв ⏱":
             try:
                 city = user_info[1]
@@ -52,11 +61,22 @@ async def message_command(msg: types.Message):
                                     reply_markup=keyboards.settings
                                     )
 
+        elif msg.text == "Команды для Админа 🦸" and msg.from_user.id in config.admins_id:
+            await bot.send_message(chat_id=msg.from_user.id,
+                                   text="Команды для Админа 🦸",
+                                   reply_markup=keyboards.admin_keyboards
+                                   )
+
 
 
 
 @dp.callback_query_handler(lambda call: True)
 async def callback_buttons(callback_query: types.CallbackQuery):
+    try:
+        db.update_last_use(callback_query.from_user.id)
+    except:
+        pass
+
     if callback_query.data in datas.all_cities:
         if db.get_user(callback_query.from_user.id):
             db.update_city(callback_query.from_user.id, callback_query.data)
@@ -74,11 +94,18 @@ async def callback_buttons(callback_query: types.CallbackQuery):
                                         parse_mode="Markdown",
                                         reply_markup=None)
 
-            await bot.send_message(callback_query.from_user.id,
-                                   text="*Алхамдулилах*",
-                                   parse_mode="Markdown",
-                                   reply_markup=keyboards.menu
-                                   )
+            if callback_query.from_user.id in config.admins_id:
+                await bot.send_message(callback_query.from_user.id,
+                                       text="*Алхамдулилах*",
+                                       parse_mode="Markdown",
+                                       reply_markup=keyboards.menu.row(keyboards.additional_menu)
+                                       )
+            else:
+                await bot.send_message(callback_query.from_user.id,
+                                       text="*Алхамдулилах*",
+                                       parse_mode="Markdown",
+                                       reply_markup=keyboards.menu
+                                       )
 
 
     elif callback_query.data in ["today", "tomorrow"]:
@@ -141,3 +168,15 @@ async def callback_buttons(callback_query: types.CallbackQuery):
                                     parse_mode="Markdown",
                                     reply_markup=keyboards.areas
                                     )
+
+    elif callback_query.data in ["get_users_info", "get_users", "get_base_file"]:
+        if callback_query.data == "get_users_info":
+            answer = db.get_info_users()
+            await bot.send_message(callback_query.from_user.id, answer, parse_mode="html")
+
+        elif callback_query.data == "get_users":
+            answer = db.get_users()
+            await bot.send_message(callback_query.from_user.id, answer, parse_mode="html")
+
+        elif callback_query.data == "get_base_file":
+            await bot.send_document(callback_query.from_user.id, open("botbase.db", "rb"), caption="База данных")

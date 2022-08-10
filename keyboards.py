@@ -43,3 +43,11 @@ def day(day):
     return day
 
 settings = InlineKeyboardMarkup().row(InlineKeyboardButton("Изменить местоположение", callback_data="gps"))
+
+admin_keyboards = InlineKeyboardMarkup()
+admin_keyboards.row(InlineKeyboardButton("Пользователы (с инфо)", callback_data="get_users_info"),
+                    InlineKeyboardButton("Пользователы (без инфо)", callback_data="get_users"))
+
+admin_keyboards.row(InlineKeyboardButton("База данных (файл)", callback_data="get_base_file"))
+
+additional_menu = KeyboardButton('Команды для Админа 🦸')

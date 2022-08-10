@@ -1,2 +1,1 @@
-text = "Горно-Бадахшанская автономная область"
-print(text.split())
+print(str(datetime.datetime.now()) + "!")
