@@ -63,14 +63,14 @@ async def callback_buttons(callback_query: types.CallbackQuery):
 
             await bot.edit_message_text(chat_id = callback_query.from_user.id,
                                         message_id=callback_query.message.message_id,
-                                        text = "*Ваше местоположение успешно изменено !!!* ✔✔✔",
+                                        text = "*Ваше местоположение успешно изменено !!!* ✅✅✅",
                                         parse_mode="Markdown",
                                         reply_markup=None)
         else:
             db.add_user(callback_query.from_user.id, callback_query.data, callback_query.from_user.username)
             await bot.edit_message_text(chat_id=callback_query.from_user.id,
                                         message_id=callback_query.message.message_id,
-                                        text="*Вы успешно регистрированы !!!* ✔✔✔",
+                                        text="*Вы успешно зарегистрировались !!!* ✅✅✅",
                                         parse_mode="Markdown",
                                         reply_markup=None)
 
