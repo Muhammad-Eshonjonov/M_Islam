@@ -50,4 +50,4 @@ admin_keyboards.row(InlineKeyboardButton("Пользователы (с инфо)
 
 admin_keyboards.row(InlineKeyboardButton("База данных (файл)", callback_data="get_base_file"))
 
-additional_menu = KeyboardButton('Команды для Админа 🦸')
+admin_menu = menu.row(KeyboardButton('Команды для Админа 🦸'))

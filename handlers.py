@@ -26,7 +26,7 @@ async def commands(msg: types.Message):
     else:
         if msg.from_user.id in config.admins_id:
             await bot.send_message(msg.from_user.id, "Ассаламу Алейкум ва Рахматуллохи ва Баракатух 🤝",
-                                   reply_markup=keyboards.menu.row(keyboards.additional_menu))
+                                   reply_markup=keyboards.admin_menu)
         else:
             await bot.send_message(msg.from_user.id, "Ассаламу Алейкум ва Рахматуллохи ва Баракатух 🤝",
                                    reply_markup=keyboards.menu)
@@ -37,7 +37,7 @@ async def commands(msg: types.Message):
 @dp.message_handler()
 async def message_command(msg: types.Message):
     user_info = db.get_user(msg.from_user.id)
-    if user_info:
+    if user_info or msg.text == "Команды для Админа 🦸":
         db.update_last_use(msg.from_user.id)
         if msg.text == "Время молитв ⏱":
             try:
@@ -60,7 +60,6 @@ async def message_command(msg: types.Message):
                                     parse_mode="Markdown",
                                     reply_markup=keyboards.settings
                                     )
-
         elif msg.text == "Команды для Админа 🦸" and msg.from_user.id in config.admins_id:
             await bot.send_message(chat_id=msg.from_user.id,
                                    text="Команды для Админа 🦸",
@@ -98,7 +97,7 @@ async def callback_buttons(callback_query: types.CallbackQuery):
                 await bot.send_message(callback_query.from_user.id,
                                        text="*Алхамдулилах*",
                                        parse_mode="Markdown",
-                                       reply_markup=keyboards.menu.row(keyboards.additional_menu)
+                                       reply_markup=keyboards.admin_menu
                                        )
             else:
                 await bot.send_message(callback_query.from_user.id,
