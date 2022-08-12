@@ -27,6 +27,7 @@ async def commands(msg: types.Message):
         if msg.from_user.id in config.admins_id:
             await bot.send_message(msg.from_user.id, "Ассаламу Алейкум ва Рахматуллохи ва Баракатух 🤝",
                                    reply_markup=keyboards.admin_menu)
+
         else:
             await bot.send_message(msg.from_user.id, "Ассаламу Алейкум ва Рахматуллохи ва Баракатух 🤝",
                                    reply_markup=keyboards.menu)
@@ -65,6 +66,12 @@ async def message_command(msg: types.Message):
                                    text="Команды для Админа 🦸",
                                    reply_markup=keyboards.admin_keyboards
                                    )
+    else:
+        await bot.send_message(msg.from_user.id, "Пожалуйста зарегистрируйтесь сначала...")
+        await bot.send_message(msg.from_user.id,
+                               "*Выберите свое местоположение 1/2* 👈",
+                               parse_mode="Markdown",
+                               reply_markup=keyboards.areas)
 
 
 
@@ -75,6 +82,14 @@ async def callback_buttons(callback_query: types.CallbackQuery):
         db.update_last_use(callback_query.from_user.id)
     except:
         pass
+    user_info = db.get_user(callback_query.from_user.id)
+
+    if not user_info:
+        await bot.send_message(callback_query.from_user.id, "Пожалуйста зарегистрируйтесь сначала...")
+        await bot.send_message(callback_query.from_user.id,
+                               "*Выберите свое местоположение 1/2* 👈",
+                               parse_mode="Markdown",
+                               reply_markup=keyboards.areas)
 
     if callback_query.data in datas.all_cities:
         if db.get_user(callback_query.from_user.id):
@@ -83,15 +98,15 @@ async def callback_buttons(callback_query: types.CallbackQuery):
             await bot.edit_message_text(chat_id = callback_query.from_user.id,
                                         message_id=callback_query.message.message_id,
                                         text = "*Ваше местоположение успешно изменено !!!* ✅✅✅",
-                                        parse_mode="Markdown",
-                                        reply_markup=None)
+                                        parse_mode="Markdown"
+                                        )
         else:
             db.add_user(callback_query.from_user.id, callback_query.data, callback_query.from_user.username)
             await bot.edit_message_text(chat_id=callback_query.from_user.id,
                                         message_id=callback_query.message.message_id,
                                         text="*Вы успешно зарегистрировались !!!* ✅✅✅",
-                                        parse_mode="Markdown",
-                                        reply_markup=None)
+                                        parse_mode="Markdown"
+                                        )
 
             if callback_query.from_user.id in config.admins_id:
                 await bot.send_message(callback_query.from_user.id,

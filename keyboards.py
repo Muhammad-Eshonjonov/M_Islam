@@ -50,4 +50,8 @@ admin_keyboards.row(InlineKeyboardButton("Пользователы (с инфо)
 
 admin_keyboards.row(InlineKeyboardButton("База данных (файл)", callback_data="get_base_file"))
 
-admin_menu = menu.row(KeyboardButton('Команды для Админа 🦸'))
+admin_menu = ReplyKeyboardMarkup(
+    resize_keyboard = True, one_time_keyboard = False
+)
+
+admin_menu.row(KeyboardButton('Время молитв ⏱'), KeyboardButton('Настройки ⚙')).row(KeyboardButton('Команды для Админа 🦸'))
