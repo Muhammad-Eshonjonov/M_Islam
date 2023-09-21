@@ -10,7 +10,8 @@ from config import TOKEN
 import parser
 from base import DBController
 
-bot = Bot(token = TOKEN)
+proxy_url = 'http://proxy.server:3128'
+bot = Bot(token = TOKEN, proxy=proxy_url)
 dp = Dispatcher(bot)
 db = DBController(filename=config.botbase_filename)
 
