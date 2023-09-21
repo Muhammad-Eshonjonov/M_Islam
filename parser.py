@@ -29,7 +29,10 @@ cities_time = {
 
 def parsing_times(day):
     url = 'http://shuroiulamo.tj/tj/namaz'
-    r = requests.get(url)
+    proxies = {
+         'http': 'http://proxy.server:3128',
+}
+    r = requests.get(url, proxies = proxies)
     html = BS(r.content, 'lxml')
 
     if day == "today": # собирание время молитв на сегодня
